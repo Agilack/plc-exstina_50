@@ -14,71 +14,59 @@
 #include "hardware.h"
 #include "main.h"
 #include "uart.h"
+#include "display.h"
 
-static void disp_putc(u8 c);
-static void disp_puts(u8 line, char *s);
+static int but_value(void);
 
 int main(void)
 {
-    u8  c;
     int i;
-    
+    int line_count;
+
     hw_init();
     uart_init();
     
     uart_puts("Exstina-50 - Display Unit Test\r\n");
     uart_crlf();
     
-    for (i = 0; i < 0x10000; i++)
-        ;
-    /* Reset display state machine */
-    disp_putc('\r');
-    /* Clear display */
-    disp_putc(0x1B);
+    disp_init();
     
-    /* Wait a short time */
-    for (i = 0; i < 0x10000; i++)
-        ;
     /* Show line 1 */
     disp_puts(3, "   Exstina 50   ");
     /* Wait a short time */
     for (i = 0; i < 0x10000; i++)
         ;
     /* Show line 4 */
-    disp_puts(0, "Display test 0.1");
+    disp_puts(0, "Display test 0.2");
     
+    line_count = 0;
+
     while(1)
     {
-        while ( ! uart_isready())
+        while (but_value() == 0)
             ;
-        c = uart_rd();
-        if (c == '0')
-            disp_putc('\n');
-        if (c == '1')
-            disp_puts(3, "/o\\o/o\\o/");
-        if (c == '2')
-            disp_puts(2, " Display Unit-test");
-        if (c == '4')
-            disp_puts(0, "Hello World !");
+        if (but_value() & 2)
+        {
+            disp_puts(line_count & 0x03, "Button 0        ");
+            line_count ++;
+        }
+        if (but_value() & 8)
+        {
+            disp_puts(line_count & 0x03, "Button 1        ");
+            line_count ++;
+        }
+        while (but_value() != 0)
+            ;
     }
 }
 
-static void disp_puts(u8 line, char *s)
+static int but_value(void)
 {
-    disp_putc('0' + line);
-    while(*s)
-    {
-        disp_putc(*s);
-        s++;
-    }
-    disp_putc('\n');
-}
-
-static void disp_putc(u8 c)
-{
-	while ( (reg_rd(UART2_SR) & 0x80) != 0x80)
-		;
-	reg_wr(UART2_DR, c);
+    int v;
+    v  = reg_rd(GPIO_IDR(GPIOA));
+    v &= 0x0A;
+    v ^= 0x0A;
+    return v;
 }
 
 /* EOF */

@@ -14,14 +14,31 @@
 #include "hardware.h"
 #include "main.h"
 
+static void hw_init_buttons(void);
+
 void hw_init(void)
 {
     /* Enable AFIO */
     reg_set(RCC_APB2ENR, 0x01);
     
-    /* Reset interrupt controller */
-    reg_clr(EXTI_IMR,  0xFFFFFFFF); /* Interrupt Mask Register */
-    reg_clr(EXTI_EMR,  0xFFFFFFFF); /* Event Mask Register */
+    hw_init_buttons();
+}
+
+static void hw_init_buttons(void)
+{
+    u32 val;
+    
+    /* Activate GPIOA */
+	reg_set(RCC_APB2ENR,   0x04);
+
+	/* Configure input GPIOs */
+	val  = reg_rd(GPIOA);
+	val &= 0xFFFFFF0F; /* Mask for PA1 (SW0) */
+	val |= 0x00000040; /* Config for PA1 (input, floating) */
+	val &= 0xFFFF0FFF; /* Mask for PA3 (SW1) */
+	val |= 0x00004000; /* Config for PA1 (input, floating) */
+	reg_wr(GPIOA, val);
+
 }
 
 u32 reg_rd(u32 reg)

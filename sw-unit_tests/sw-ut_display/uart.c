@@ -14,8 +14,6 @@
 #include "hardware.h"
 #include "uart.h"
 
-static void uart2_init(void);
-
 void uart_init(void)
 {
 	u32 val;
@@ -41,11 +39,9 @@ void uart_init(void)
 //  reg_wr(UART_BRR, 0x0138);  /* 115200 @ 36MHz       */
 	reg_set(UART_CR1, 0x0C);   /* Set TE & RE bits     */
 	reg_set(UART_CR1, 0x2000); /* Set USART Enable bit */
-
-    uart2_init();
 }
 
-static void uart2_init(void)
+void uart2_init(void)
 {
     u32 val;
     

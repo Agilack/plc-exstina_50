@@ -26,7 +26,7 @@ LDFLAGS += -lc -lgcc -Tut_display.ld
 
 ASRC = start.s cortexm3_macro.s
 
-SRC = main.c hardware.c uart.c
+SRC = main.c hardware.c uart.c display.c
 
 # Define all object files.
 _COBJ =  $(SRC:.c=.o)
