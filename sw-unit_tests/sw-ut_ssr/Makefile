@@ -7,7 +7,7 @@ THUMB_IW = -mthumb-interwork
 
 # Target file name (without extension).
 BUILDDIR = build
-TARGET = $(BUILDDIR)/ut_sdcard
+TARGET = $(BUILDDIR)/ut_ssr
 
 # Define programs and commands.
 CC = $(CROSS)-gcc
@@ -26,7 +26,7 @@ LDFLAGS += -lc -lgcc -Tut_ssr.ld
 
 ASRC = start.s cortexm3_macro.s
 
-SRC = main.c hardware.c uart.c
+SRC = main.c hardware.c display.c uart.c
 
 # Define all object files.
 _COBJ =  $(SRC:.c=.o)

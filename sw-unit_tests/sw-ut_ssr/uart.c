@@ -39,9 +39,25 @@ void uart_init(void)
 //  reg_wr(UART_BRR, 0x0138);  /* 115200 @ 36MHz       */
 	reg_set(UART_CR1, 0x0C);   /* Set TE & RE bits     */
 	reg_set(UART_CR1, 0x2000); /* Set USART Enable bit */
-	
-//	reg_set(UART_CR1,   0x20); /* Set RXNEIE bit                */
-//	reg_set(0xE000E104, 0x20); /* NVIC: Enable USART1 interrupt */
+}
+
+void uart2_init(void)
+{
+    u32 val;
+    
+	/* Configure UART2-TX pin */
+	val  = reg_rd(GPIOA);
+	val &= 0xFFFFF0FF;
+	val |= 0x00000B00;
+	reg_wr(GPIOA, val);
+    
+    /* Activate USART2 */
+    reg_set(RCC_APB1ENR, 0x20000);
+    
+    /* Configure USART2 */
+    reg_wr (UART2_BRR, 0x0045); /* 115200 @ 8MHz */
+	reg_set(UART2_CR1, 0x08);   /* Set TE (only) bit    */
+	reg_set(UART2_CR1, 0x2000); /* Set USART Enable bit */
 }
 
 void USART1_IRQHandler(void)

@@ -14,6 +14,7 @@
 #ifndef __HARDWARE_H
 #define __HARDWARE_H
 
+#define UART2 ((u32)0x40004400)
 #define AFIO  ((u32)0x40010000)
 #define EXTI  ((u32)0x40010400)
 #define GPIOA ((u32)0x40010800)
@@ -51,6 +52,11 @@
 #define UART_DR    (UART1 + 0x04)
 #define UART_BRR   (UART1 + 0x08)
 #define UART_CR1   (UART1 + 0x0C)
+
+#define UART2_SR   (UART2 + 0x00)
+#define UART2_DR   (UART2 + 0x04)
+#define UART2_BRR  (UART2 + 0x08)
+#define UART2_CR1  (UART2 + 0x0C)
 
 #include "types.h"
 

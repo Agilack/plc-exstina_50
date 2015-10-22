@@ -14,6 +14,7 @@
 #include "hardware.h"
 #include "main.h"
 #include "uart.h"
+#include "display.h"
 
 void show_menu(void);
 
@@ -29,6 +30,10 @@ int main(void)
     
     uart_puts("Exstina-50 - Solid State Relay (SSR) Unit Test\r\n");
     uart_crlf();
+    
+    disp_init();
+    disp_puts(3, "   Exstina 50   ");
+    disp_puts(2, "SSR UnitTest 0.1");
     
     while(1)
     {
