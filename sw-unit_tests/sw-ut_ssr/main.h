@@ -14,6 +14,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+char *strcpy(char *dest, const char *src);
 
 #endif
 /* EOF */
