@@ -7,7 +7,7 @@ THUMB_IW = -mthumb-interwork
 
 # Target file name (without extension).
 BUILDDIR = build
-TARGET = $(BUILDDIR)/ut_ssr
+TARGET = $(BUILDDIR)/ut_outputs
 
 # Define programs and commands.
 CC = $(CROSS)-gcc
@@ -22,11 +22,11 @@ CFLAGS += -Wredundant-decls -Wreturn-type -Wshadow -Wunused
 CFLAGS += -Inet
 
 LDFLAGS = -nostartfiles -Wl,-Map=$(TARGET).map,--cref,--gc-sections
-LDFLAGS += -lc -lgcc -Tut_ssr.ld
+LDFLAGS += -lc -lgcc -Tut_outputs.ld
 
 ASRC = start.s cortexm3_macro.s
 
-SRC = main.c hardware.c display.c uart.c
+SRC = main.c hardware.c display.c output.c uart.c
 
 # Define all object files.
 _COBJ =  $(SRC:.c=.o)

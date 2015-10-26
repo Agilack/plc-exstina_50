@@ -1,5 +1,5 @@
 /**
- * Exstina-50 - Solid State Relay unit-test
+ * Exstina-50 - Outputs unit-test
  *
  * Copyright (c) 2015 Saint-Genest Gwenael <gwen@agilack.fr>
  *
@@ -15,32 +15,30 @@
 #include "main.h"
 #include "uart.h"
 #include "display.h"
+#include "output.h"
 
 void serial_menu(void);
 void disp_menu  (void);
 static int but_value(void);
 
 int menu_sel;
-int out1, out2, out3, out4;
 
 int main(void)
 {
     int c;
-    int v;
 
     hw_init();
     uart_init();
     
     hw_out_init();
     
-    uart_puts("Exstina-50 - Solid State Relay (SSR) Unit Test\r\n");
+    uart_puts("Exstina-50 - Outputs Unit Test\r\n");
     uart_crlf();
     
     disp_init();
-    disp_puts(3, "SSR UnitTest 0.1");
+    disp_puts(3, "Outputs Test 0.1");
     
     menu_sel = 0;
-    out1 = 0; out2 = 0; out3 = 0; out4 = 0;
     
     while(1)
     {
@@ -61,62 +59,23 @@ int main(void)
             /* If right button has been pressed  */
             else if (but_value() & 8)
             {
-                if (menu_sel == 1)
+                switch(menu_sel)
                 {
-                    if (out1)
-                    {
-                        reg_wr(GPIO_BSRR(GPIOB), 0x00080000);
-                        out1 = 0;
-                    }
-                    else
-                    {
-                        reg_wr(GPIO_BSRR(GPIOB), 0x00000008);
-                        out1 = 1;
-                    }
-                }
-                /* If currently selected output is 2 */
-                if (menu_sel == 2)
-                {
-                    if (out2)
-                    {
-                        reg_wr(GPIO_BSRR(GPIOB), 0x00100000);
-                        out2 = 0;
-                    }
-                    else
-                    {
-                        reg_wr(GPIO_BSRR(GPIOB), 0x00000010);
-                        out2 = 1;
-                    }
-                }
-                /* If currently selected output is 3 */
-                if (menu_sel == 3)
-                {
-                    if (out3)
-                    {
-                        reg_wr(GPIO_BSRR(GPIOB), 0x01000000);
-                        out3 = 0;
-                    }
-                    else
-                    {
-                        reg_wr(GPIO_BSRR(GPIOB), 0x00000100);
-                        out3 = 1;
-                    }
-                }
-                /* If currently selected output is 4 */
-                if (menu_sel == 4)
-                {
-                    if (out4)
-                    {
-                        reg_wr(GPIO_BSRR(GPIOB), 0x02000000);
-                        out4 = 0;
-                    }
-                    else
-                    {
-                        reg_wr(GPIO_BSRR(GPIOB), 0x00000200);
-                        out4 = 1;
-                    }
+                    case 1:
+                        out_toggle(OUT_1);
+                        break;
+                    case 2:
+                        out_toggle(OUT_2);
+                        break;
+                    case 3:
+                        out_toggle(OUT_3);
+                        break;
+                    case 4:
+                        out_toggle(OUT_4);
+                        break;
                 }
             }
+            /* Wait until all button released */
             while( but_value() )
                 ;
             continue;
@@ -127,76 +86,64 @@ int main(void)
         {
             case 'a':
                 uart_puts("Set ALL SSR ON\r\n");
-                reg_wr(GPIO_BSRR(GPIOB), 0x00000318);
+                out_set(OUT_1, OUT_ON);
+                out_set(OUT_2, OUT_ON);
+                out_set(OUT_3, OUT_ON);
+                out_set(OUT_4, OUT_ON);
                 break;
+                
             case 'n':
                 uart_puts("Set ALL SSR OFF\r\n");
-                reg_wr(GPIO_BSRR(GPIOB), 0x03180000);
+                out_set(OUT_1, OUT_OFF);
+                out_set(OUT_2, OUT_OFF);
+                out_set(OUT_3, OUT_OFF);
+                out_set(OUT_4, OUT_OFF);
                 break;
+                
             case '1':
-                v = reg_rd( GPIO_ODR(GPIOB) );
                 uart_puts("Set SSR-1 ");
-                if (v & 0x08)
-                {
-                    reg_wr(GPIO_BSRR(GPIOB), 0x00080000);
-                    uart_puts("OFF\r\n");
-                    out1 = 0;
-                }
-                else
-                {
-                    reg_wr(GPIO_BSRR(GPIOB), 0x00000008);
+                /* Invert the output 1 state */
+                out_toggle(OUT_1);
+                /* Send new state to debug port */
+                if (out_status(OUT_1) == OUT_ON)
                     uart_puts("ON\r\n");
-                    out1 = 1;
-                }
+                else
+                    uart_puts("OFF\r\n");
                 break;
+                
             case '2':
-                v = reg_rd( GPIO_ODR(GPIOB) );
                 uart_puts("Set SSR-2 ");
-                if (v & 0x10)
-                {
-                    reg_wr(GPIO_BSRR(GPIOB), 0x00100000);
-                    uart_puts("OFF\r\n");
-                    out2 = 0;
-                }
-                else
-                {
-                    reg_wr(GPIO_BSRR(GPIOB), 0x00000010);
+                /* Invert the output 2 state */
+                out_toggle(OUT_2);
+                /* Send new state to debug port */
+                if (out_status(OUT_2) == OUT_ON)
                     uart_puts("ON\r\n");
-                    out2 = 1;
-                }
+                else
+                    uart_puts("OFF\r\n");
                 break;
+                
             case '3':
-                v = reg_rd( GPIO_ODR(GPIOB) );
                 uart_puts("Set SSR-3 ");
-                if (v & 0x0100)
-                {
-                    reg_wr(GPIO_BSRR(GPIOB), 0x01000000);
-                    uart_puts("OFF\r\n");
-                    out3 = 0;
-                }
-                else
-                {
-                    reg_wr(GPIO_BSRR(GPIOB), 0x00000100);
+                /* Invert the output 3 state */
+                out_toggle(OUT_3);
+                /* Send new state to debug port */
+                if (out_status(OUT_3) == OUT_ON)
                     uart_puts("ON\r\n");
-                    out3 = 1;
-                }
+                else
+                    uart_puts("OFF\r\n");
                 break;
+                
             case '4':
-                v = reg_rd( GPIO_ODR(GPIOB) );
                 uart_puts("Set SSR-4 ");
-                if (v & 0x0200)
-                {
-                    reg_wr(GPIO_BSRR(GPIOB), 0x02000000);
-                    uart_puts("OFF\r\n");
-                    out4 = 0;
-                }
-                else
-                {
-                    reg_wr(GPIO_BSRR(GPIOB), 0x00000200);
+                /* Invert the output 4 state */
+                out_toggle(OUT_4);
+                /* Send new state to debug port */
+                if (out_status(OUT_4) == OUT_ON)
                     uart_puts("ON\r\n");
-                    out4 = 1;
-                }
+                else
+                    uart_puts("OFF\r\n");
                 break;
+                
             default:
                 uart_puts("Unknown command\r\n");
         }
@@ -219,6 +166,7 @@ void disp_menu(void)
 {
     char str_labels[17];
     char str_state[17];
+    int oval;
     
     /* Insert output-1 label */
     if (menu_sel == 1) strcpy(str_labels +  0, "OUT1");
@@ -234,16 +182,20 @@ void disp_menu(void)
     else               strcpy(str_labels + 12, " O4 ");
 
     /* Insert output-1 value */
-    if (out1) strcpy(str_state +  0, " ON ");
+    oval = out_status(OUT_1);
+    if (oval) strcpy(str_state +  0, " ON ");
     else      strcpy(str_state +  0, " -- ");
     /* Insert output-2 value */
-    if (out2) strcpy(str_state +  4, " ON ");
+    oval = out_status(OUT_2);
+    if (oval) strcpy(str_state +  4, " ON ");
     else      strcpy(str_state +  4, " -- ");
     /* Insert output-3 value */
-    if (out3) strcpy(str_state +  8, " ON ");
+    oval = out_status(OUT_3);
+    if (oval) strcpy(str_state +  8, " ON ");
     else      strcpy(str_state +  8, " -- ");
     /* Insert output-4 value */
-    if (out4) strcpy(str_state + 12, " ON ");
+    oval = out_status(OUT_4);
+    if (oval) strcpy(str_state + 12, " ON ");
     else      strcpy(str_state + 12, " -- ");
     
     /* Update the labels line on display */

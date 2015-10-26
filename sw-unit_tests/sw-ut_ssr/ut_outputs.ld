@@ -1,5 +1,5 @@
 /**
- * Exstina-50 - Solid State Relay unit-test
+ * Exstina-50 - Outputs unit-test
  *
  * Original Copyright RAISONANCE S.A.S. 2008
  * Modified P Harrison May 2009

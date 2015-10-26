@@ -1,5 +1,5 @@
 /**
- * Exstina-50 - Solid State Relay unit-test
+ * Exstina-50 - Outputs unit-test
  *
  * Copyright (c) 2015 Saint-Genest Gwenael <gwen@agilack.fr>
  *
@@ -54,6 +54,9 @@ void hw_out_init(void)
 	
 	/* Disable JTAG/SWD to get full access to PB3 and PB4 */
 	reg_set(AFIO_MAPR, 0x04000000);
+
+    /* Set outputs default to OFF */
+    reg_wr(GPIO_BSRR(GPIOB), 0x03180000);
 
 	/* Configure OUT-1 and OUT-2 pins */
 	val  = reg_rd(GPIOB);

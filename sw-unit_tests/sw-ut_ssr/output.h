@@ -11,14 +11,20 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  */
-#ifndef DISPLAY_H
-#define DISPLAY_H
+#ifndef OUTPUT_H
+#define OUTPUT_H
 
-#include "types.h"
+#define OUT_OFF    0
+#define OUT_ON     1
+#define OUT_UNDEF -1
 
-void disp_init(void);
-void disp_putc(u8 c);
-void disp_puts(u8 line, char *s);
+#define OUT_1   1
+#define OUT_2   2
+#define OUT_3   3
+#define OUT_4   4
+
+int  out_status(int n);
+void out_set   (int n, int state);
+void out_toggle(int n);
 
 #endif
-/* EOF */

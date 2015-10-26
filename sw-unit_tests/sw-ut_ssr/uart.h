@@ -1,5 +1,5 @@
 /**
- * Exstina 50 - Solid State Relay unit-test
+ * Exstina-50 - Outputs unit-test
  *
  * Copyright (c) 2015 Saint-Genest Gwenael <gwen@agilack.fr>
  *
